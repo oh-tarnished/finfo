@@ -1,0 +1,109 @@
+project_name: fi
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: fi
+    binary: fi
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    main: .
+
+archives:
+  - id: fi-archive
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}amd64
+      {{- else if eq .Arch "arm64" }}arm64
+      {{- else }}{{ .Arch }}{{ end }}
+    files:
+      - LICENSE
+      - README.md
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - typo
+
+release:
+  github:
+    owner: oh-tarnished
+    name: fi
+  draft: false
+  prerelease: auto
+  name_template: "{{.ProjectName}} v{{.Version}}"
+  header: |
+    ## What's New in v{{.Version}}
+    
+    Download the appropriate binary for your platform below.
+    
+    ### Installation
+    
+    #### macOS
+    ```bash
+    # Intel (amd64)
+    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_darwin_amd64.tar.gz
+    tar -xzf fi_{{.Version}}_darwin_amd64.tar.gz
+    sudo mv fi /usr/local/bin/
+    
+    # Apple Silicon (arm64)
+    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_darwin_arm64.tar.gz
+    tar -xzf fi_{{.Version}}_darwin_arm64.tar.gz
+    sudo mv fi /usr/local/bin/
+    ```
+    
+    #### Linux
+    ```bash
+    # amd64
+    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_linux_amd64.tar.gz
+    tar -xzf fi_{{.Version}}_linux_amd64.tar.gz
+    sudo mv fi /usr/local/bin/
+    
+    # arm64
+    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_linux_arm64.tar.gz
+    tar -xzf fi_{{.Version}}_linux_arm64.tar.gz
+    sudo mv fi /usr/local/bin/
+    ```
+    
+    Or use package managers (deb, rpm, apk, archlinux) - see assets below.
+
