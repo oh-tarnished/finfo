@@ -70,6 +70,7 @@ homebrew_casks:
     repository:
       owner: oh-tarnished
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     directory: Casks
     homepage: "https://github.com/oh-tarnished/finfo"
     description: "File info at a glance — metadata, checksums, binary analysis"
