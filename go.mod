@@ -1,4 +1,4 @@
-module github.com/oh-tarnished/fi
+module github.com/oh-tarnished/finfo
 
 go 1.21
 

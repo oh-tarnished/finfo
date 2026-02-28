@@ -1,4 +1,4 @@
-# fi - File Information CLI Tool
+# finfo - File Information CLI Tool
 
 A powerful, colorful CLI tool for displaying comprehensive file information with advanced analysis capabilities.
 
@@ -17,59 +17,61 @@ A powerful, colorful CLI tool for displaying comprehensive file information with
 
 ## Installation
 
+### Go install (all platforms)
+
+Requires Go 1.21 or later:
+
+```bash
+go install github.com/oh-tarnished/finfo@latest
+```
+
+Ensure `$HOME/go/bin` is in your PATH.
+
 ### macOS
 
 #### Homebrew
 ```bash
-brew tap oh-tarnished/tap
-brew install fi
+brew tap oh-tarnished/finfo
+brew install finfo
 ```
 
 #### Manual Install
 ```bash
 # Download latest release
-curl -LO https://github.com/oh-tarnished/fi/releases/latest/download/fi-darwin-arm64
+curl -LO https://github.com/oh-tarnished/finfo/releases/latest/download/finfo-darwin-arm64
 
 # Make executable and move to PATH
-chmod +x fi-darwin-arm64
-sudo mv fi-darwin-arm64 /usr/local/bin/fi
+chmod +x finfo-darwin-arm64
+sudo mv finfo-darwin-arm64 /usr/local/bin/finfo
 ```
 
 ### Linux
 
 #### Debian/Ubuntu (deb)
 ```bash
-curl -LO https://github.com/oh-tarnished/fi/releases/latest/download/fi_<version>_linux_amd64.deb
-sudo dpkg -i fi_<version>_linux_amd64.deb
+curl -LO https://github.com/oh-tarnished/finfo/releases/latest/download/finfo_<version>_linux_amd64.deb
+sudo dpkg -i finfo_<version>_linux_amd64.deb
 ```
 
 #### RHEL/Fedora (rpm)
 ```bash
-curl -LO https://github.com/oh-tarnished/fi/releases/latest/download/fi_<version>_linux_amd64.rpm
-sudo dnf install fi_<version>_linux_amd64.rpm
+curl -LO https://github.com/oh-tarnished/finfo/releases/latest/download/finfo_<version>_linux_amd64.rpm
+sudo dnf install finfo_<version>_linux_amd64.rpm
 ```
 
 #### Arch Linux
 ```bash
-curl -LO https://github.com/oh-tarnished/fi/releases/latest/download/fi_<version>_linux_amd64.pkg.tar.zst
-sudo pacman -U fi_<version>_linux_amd64.pkg.tar.zst
+curl -LO https://github.com/oh-tarnished/finfo/releases/latest/download/finfo_<version>_linux_amd64.pkg.tar.zst
+sudo pacman -U finfo_<version>_linux_amd64.pkg.tar.zst
 ```
 
-### From Source
-
-Requires Go 1.21 or later:
+### Build from source
 
 ```bash
-go install github.com/oh-tarnished/fi@latest
-```
-
-Or build manually:
-
-```bash
-git clone https://github.com/oh-tarnished/fi.git
-cd fi
-go build -o fi
-sudo mv fi /usr/local/bin/
+git clone https://github.com/oh-tarnished/finfo.git
+cd finfo
+go build -o finfo
+sudo mv finfo /usr/local/bin/
 ```
 
 ## Usage
@@ -78,32 +80,35 @@ sudo mv fi /usr/local/bin/
 
 ```bash
 # Show info for a specific file
-fi /usr/bin/python3
+finfo /usr/bin/python3
 
 # Search for command in PATH
-fi python3
+finfo python3
 
 # Multiple files
-fi file1 file2 file3
+finfo file1 file2 file3
 
 # Use glob patterns
-fi *.so
+finfo *.so
 ```
 
 ### Advanced Features
 
 ```bash
 # Show file with checksums
-fi --hash file.zip
+finfo --hash file.zip
 
 # Compare two files (git-like diff)
-fi file1.txt file2.txt --diff
+finfo file1.txt file2.txt --diff
 
 # Search for library files
-fi --lib ssl
+finfo --lib ssl
 
 # Disable colors
-fi --no-color /usr/bin/gcc
+finfo --no-color /usr/bin/gcc
+
+# Show only linked libraries (full list, no other info)
+finfo --ll cmake
 ```
 
 ## Output Example
@@ -143,13 +148,14 @@ Checksums:
 | `--lib` | Search for library files (.so, .a, .dylib) |
 | `--hash` | Calculate and show file checksums (MD5, SHA256, SHA512) |
 | `--diff` | Compare two files and show differences |
+| `--ll`, `--linked-libs` | Show only linked libraries (full list, no other info) |
 
 ## File Comparison
 
 The `--diff` flag provides a git-like comparison of two files:
 
 ```bash
-fi file1 file2 --diff
+finfo file1 file2 --diff
 ```
 
 Output includes:
@@ -193,7 +199,7 @@ just install
 ### Project Structure
 
 ```
-fi/
+finfo/
 ├── main.go              # Entry point
 ├── fileinfo.go          # Core file info gathering
 ├── fileinfo_darwin.go   # macOS-specific info

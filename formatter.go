@@ -23,6 +23,17 @@ var (
 // DisableColors disables color output
 var DisableColors = false
 
+// FormatLinkedLibrariesOnly outputs only the linked libraries section with full list
+func FormatLinkedLibrariesOnly(fi *FileInfo) string {
+	if DisableColors {
+		color.NoColor = true
+	}
+	if fi.BinaryInfo == nil || len(fi.BinaryInfo.LinkedLibraries) == 0 {
+		return fmt.Sprintf("No linked libraries found for %s\n", fi.Path)
+	}
+	return FormatLinkedLibrariesOnlySection(fi.BinaryInfo, labelColor.Sprint, valueColor.Sprint, treeColor.Sprint)
+}
+
 // FormatFileInfo formats the file information into a tree-like display
 func FormatFileInfo(fi *FileInfo) string {
 	if DisableColors {
@@ -123,7 +134,7 @@ func FormatFileInfo(fi *FileInfo) string {
 
 	// Binary Information
 	if fi.BinaryInfo != nil {
-		binaryOutput := FormatBinaryInfo(fi.BinaryInfo, labelColor.Sprint, valueColor.Sprint, treeColor.Sprint, execColor.Sprint)
+		binaryOutput := FormatBinaryInfo(fi.BinaryInfo, false, labelColor.Sprint, valueColor.Sprint, treeColor.Sprint, execColor.Sprint)
 		if binaryOutput != "" {
 			sb.WriteString(binaryOutput)
 		}

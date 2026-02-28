@@ -1,4 +1,4 @@
-project_name: fi
+project_name: finfo
 
 before:
   hooks:
@@ -6,8 +6,8 @@ before:
     - go test ./...
 
 builds:
-  - id: fi
-    binary: fi
+  - id: finfo
+    binary: finfo
     env:
       - CGO_ENABLED=0
     goos:
@@ -21,7 +21,7 @@ builds:
     main: .
 
 archives:
-  - id: fi-archive
+  - id: finfo-archive
     format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
@@ -38,7 +38,7 @@ archives:
         format: zip
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
@@ -50,60 +50,83 @@ changelog:
     - title: Features
       regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
       order: 0
-    - title: 'Bug Fixes'
+    - title: "Bug Fixes"
       regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
       order: 1
-    - title: 'Performance Improvements'
+    - title: "Performance Improvements"
       regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
       order: 2
     - title: Others
       order: 999
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
-      - '^chore:'
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
       - typo
+
+# Homebrew tap - publishes pre-built binary to oh-tarnished/homebrew-tap
+# Requires HOMEBREW_TAP_GITHUB_TOKEN with write access to the tap repo
+homebrew_casks:
+  - name: finfo
+    repository:
+      owner: oh-tarnished
+      name: homebrew-tap
+    directory: Casks
+    homepage: "https://github.com/oh-tarnished/finfo"
+    description: "Display detailed file information with tree-like formatting"
+    ids:
+      - finfo-archive
+    binaries:
+      - finfo
+    url:
+      verified: "github.com/oh-tarnished/finfo/"
+    # Remove quarantine for unsigned binary (Gatekeeper)
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/finfo"]
+          end
 
 release:
   github:
     owner: oh-tarnished
-    name: fi
+    name: finfo
   draft: false
   prerelease: auto
   name_template: "{{.ProjectName}} v{{.Version}}"
   header: |
     ## What's New in v{{.Version}}
-    
+
     Download the appropriate binary for your platform below.
-    
+
     ### Installation
-    
+
     #### macOS
     ```bash
     # Intel (amd64)
-    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_darwin_amd64.tar.gz
-    tar -xzf fi_{{.Version}}_darwin_amd64.tar.gz
-    sudo mv fi /usr/local/bin/
-    
+    curl -LO https://github.com/oh-tarnished/finfo/releases/download/v{{.Version}}/finfo_{{.Version}}_darwin_amd64.tar.gz
+    tar -xzf finfo_{{.Version}}_darwin_amd64.tar.gz
+    sudo mv finfo /usr/local/bin/
+
     # Apple Silicon (arm64)
-    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_darwin_arm64.tar.gz
-    tar -xzf fi_{{.Version}}_darwin_arm64.tar.gz
-    sudo mv fi /usr/local/bin/
+    curl -LO https://github.com/oh-tarnished/finfo/releases/download/v{{.Version}}/finfo_{{.Version}}_darwin_arm64.tar.gz
+    tar -xzf finfo_{{.Version}}_darwin_arm64.tar.gz
+    sudo mv finfo /usr/local/bin/
     ```
-    
+
     #### Linux
     ```bash
     # amd64
-    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_linux_amd64.tar.gz
-    tar -xzf fi_{{.Version}}_linux_amd64.tar.gz
-    sudo mv fi /usr/local/bin/
-    
-    # arm64
-    curl -LO https://github.com/oh-tarnished/fi/releases/download/v{{.Version}}/fi_{{.Version}}_linux_arm64.tar.gz
-    tar -xzf fi_{{.Version}}_linux_arm64.tar.gz
-    sudo mv fi /usr/local/bin/
-    ```
-    
-    Or use package managers (deb, rpm, apk, archlinux) - see assets below.
+    curl -LO https://github.com/oh-tarnished/finfo/releases/download/v{{.Version}}/finfo_{{.Version}}_linux_amd64.tar.gz
+    tar -xzf finfo_{{.Version}}_linux_amd64.tar.gz
+    sudo mv finfo /usr/local/bin/
 
+    # arm64
+    curl -LO https://github.com/oh-tarnished/finfo/releases/download/v{{.Version}}/finfo_{{.Version}}_linux_arm64.tar.gz
+    tar -xzf finfo_{{.Version}}_linux_arm64.tar.gz
+    sudo mv finfo /usr/local/bin/
+    ```
+
+    Or use package managers (deb, rpm, apk, archlinux) - see assets below.

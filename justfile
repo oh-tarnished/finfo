@@ -1,4 +1,4 @@
-# Justfile for fi - File Information CLI Tool
+# Justfile for finfo - File Information CLI Tool
 
 # Default recipe to display help
 default:
@@ -6,19 +6,19 @@ default:
 
 # Build the binary for current platform
 build:
-    go build -o fi
+    go build -o finfo
 
 # Build with optimizations
 build-release:
-    go build -ldflags="-s -w" -o fi
+    go build -ldflags="-s -w" -o finfo
 
 # Install locally to /usr/local/bin
 install: build
-    cp fi /usr/local/bin/fi
+    cp finfo /usr/local/bin/finfo
 
 # Clean build artifacts
 clean:
-    rm -f fi
+    rm -f finfo
     rm -rf dist/
 
 # Run tests
@@ -44,10 +44,10 @@ lint:
 # Build for all platforms
 build-all:
     mkdir -p dist
-    GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/fi-darwin-amd64
-    GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/fi-darwin-arm64
-    GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/fi-linux-amd64
-    GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/fi-linux-arm64
+    GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/finfo-darwin-amd64
+    GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/finfo-darwin-arm64
+    GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/finfo-linux-amd64
+    GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/finfo-linux-arm64
 
 # Create a release using goreleaser
 release:
@@ -60,22 +60,22 @@ snapshot:
 # Run the binary with example
 run FILE="":
     @if [ -z "{{FILE}}" ]; then \
-        ./fi --help; \
+        ./finfo --help; \
     else \
-        ./fi {{FILE}}; \
+        ./finfo {{FILE}}; \
     fi
 
 # Show file info with hash
 hash FILE:
-    ./fi --hash {{FILE}}
+    ./finfo --hash {{FILE}}
 
 # Compare two files
 diff FILE1 FILE2:
-    ./fi {{FILE1}} {{FILE2}} --diff
+    ./finfo {{FILE1}} {{FILE2}} --diff
 
 # Search for library
 lib NAME:
-    ./fi --lib {{NAME}}
+    ./finfo --lib {{NAME}}
 
 # Check dependencies
 deps:
@@ -94,11 +94,11 @@ stats:
     @echo "\nGo files:"
     @find . -name "*.go" -not -path "./vendor/*" | wc -l
     @echo "\nBinary size (if built):"
-    @if [ -f fi ]; then ls -lh fi | awk '{print $5}'; else echo "Not built yet"; fi
+    @if [ -f finfo ]; then ls -lh finfo | awk '{print $5}'; else echo "Not built yet"; fi
 
 # Development build with race detector
 dev:
-    go build -race -o fi
+    go build -race -o finfo
 
 # Quick check before commit
 check: fmt test lint

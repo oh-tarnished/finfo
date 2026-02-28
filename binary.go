@@ -142,7 +142,7 @@ func analyzeELF(path string, info *BinaryInfo) error {
 }
 
 // FormatBinaryInfo formats binary information for display with colors
-func FormatBinaryInfo(info *BinaryInfo, labelFn, valueFn, treeFn, execFn func(a ...interface{}) string) string {
+func FormatBinaryInfo(info *BinaryInfo, showFullLinkedLibs bool, labelFn, valueFn, treeFn, execFn func(a ...interface{}) string) string {
 	if !info.IsExecutable && len(info.LinkedLibraries) == 0 {
 		return ""
 	}
@@ -168,7 +168,7 @@ func FormatBinaryInfo(info *BinaryInfo, labelFn, valueFn, treeFn, execFn func(a 
 	if len(info.LinkedLibraries) > 0 {
 		sb.WriteString(labelFn("Linked Libraries:\n"))
 		limit := 10
-		if len(info.LinkedLibraries) < limit {
+		if showFullLinkedLibs || len(info.LinkedLibraries) < limit {
 			limit = len(info.LinkedLibraries)
 		}
 		for i := 0; i < limit; i++ {
@@ -182,12 +182,29 @@ func FormatBinaryInfo(info *BinaryInfo, labelFn, valueFn, treeFn, execFn func(a 
 					valueFn(info.LinkedLibraries[i])))
 			}
 		}
-		if len(info.LinkedLibraries) > limit {
+		if !showFullLinkedLibs && len(info.LinkedLibraries) > limit {
 			sb.WriteString(fmt.Sprintf("  %s %s\n",
 				treeFn("╰──"),
-				valueFn(fmt.Sprintf("... and %d more", len(info.LinkedLibraries)-limit))))
+				valueFn(fmt.Sprintf("... and %d more (use --ll for full list)", len(info.LinkedLibraries)-limit))))
 		}
 	}
 
+	return sb.String()
+}
+
+// FormatLinkedLibrariesOnlySection outputs only the linked libraries section (full list, no truncation)
+func FormatLinkedLibrariesOnlySection(info *BinaryInfo, labelFn, valueFn, treeFn func(a ...interface{}) string) string {
+	if len(info.LinkedLibraries) == 0 {
+		return ""
+	}
+	var sb strings.Builder
+	sb.WriteString(labelFn("Linked Libraries:\n"))
+	for i, lib := range info.LinkedLibraries {
+		if i == len(info.LinkedLibraries)-1 {
+			sb.WriteString(fmt.Sprintf("  %s %s\n", treeFn("╰──"), valueFn(lib)))
+		} else {
+			sb.WriteString(fmt.Sprintf("  %s %s\n", treeFn("├──"), valueFn(lib)))
+		}
+	}
 	return sb.String()
 }

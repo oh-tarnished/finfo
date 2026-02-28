@@ -17,6 +17,9 @@ var GetFileInfoFunc func(string) (interface{}, error)
 // FormatFileInfoFunc is a function type for formatting file info
 var FormatFileInfoFunc func(interface{}) string
 
+// FormatLinkedLibrariesOnlyFunc formats only the linked libraries section (full list)
+var FormatLinkedLibrariesOnlyFunc func(interface{}) string
+
 // SetDisableColorsFunc is a function type for setting color disable flag
 var SetDisableColorsFunc func(bool)
 
@@ -36,27 +39,29 @@ var noColor bool
 var searchLib bool
 var showHash bool
 var diffMode bool
+var showFullLinkedLibs bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "fi [file path or command...]",
+	Use:   "finfo [file path or command...]",
 	Short: "Display detailed file information",
-	Long: `fi is a CLI tool that displays comprehensive information about files including:
+	Long: `finfo is a CLI tool that displays comprehensive information about files including:
 - File size in multiple units (GB, MB, KB, bytes)
 - Architecture and OS
 - Permissions and ownership
 - Symlink chain (if applicable)
 
-If the argument is not a valid path, fi will search for it in PATH.
+If the argument is not a valid path, finfo will search for it in PATH.
 
 Examples:
-  fi /usr/bin/python3        # Show info for a specific file
-  fi python3                 # Search for 'python3' in PATH
-  fi file1 file2 file3       # Show info for multiple files
-  fi *.so                    # Use glob patterns
-  fi --lib ssl               # Search for SSL library files
-  fi --hash file.zip         # Show file with checksums
-  fi --diff file1 file2      # Compare two files`,
+  finfo /usr/bin/python3        # Show info for a specific file
+  finfo python3                 # Search for 'python3' in PATH
+  finfo file1 file2 file3       # Show info for multiple files
+  finfo *.so                    # Use glob patterns
+  finfo --lib ssl               # Search for SSL library files
+  finfo --hash file.zip         # Show file with checksums
+  finfo --diff file1 file2      # Compare two files
+  finfo --ll cmake              # Show only linked libraries (full list)`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// Set color preference
@@ -82,6 +87,37 @@ Examples:
 					os.Exit(1)
 				}
 				fmt.Print(output)
+			}
+			return
+		}
+
+		// Handle linked libraries only mode (--ll)
+		if showFullLinkedLibs {
+			for _, input := range args {
+				filePath := input
+				if _, err := os.Stat(input); os.IsNotExist(err) {
+					if ResolveCommandFunc != nil {
+						resolved, resolveErr := ResolveCommandFunc(input)
+						if resolveErr == nil {
+							filePath = resolved
+						} else {
+							fmt.Fprintf(os.Stderr, "Error: %v\n", resolveErr)
+							continue
+						}
+					}
+				}
+				info, err := GetFileInfoFunc(filePath)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Error reading %s: %v\n", filePath, err)
+					continue
+				}
+				if FormatLinkedLibrariesOnlyFunc != nil {
+					output := FormatLinkedLibrariesOnlyFunc(info)
+					fmt.Print(output)
+				}
+				if len(args) > 1 {
+					fmt.Println()
+				}
 			}
 			return
 		}
@@ -176,4 +212,6 @@ func init() {
 	rootCmd.Flags().BoolVar(&searchLib, "lib", false, "Search for library files (.so, .a, .dylib)")
 	rootCmd.Flags().BoolVar(&showHash, "hash", false, "Calculate and show file checksums (MD5, SHA256, SHA512)")
 	rootCmd.Flags().BoolVar(&diffMode, "diff", false, "Compare two files and show differences")
+	rootCmd.Flags().BoolVar(&showFullLinkedLibs, "ll", false, "Show only linked libraries (full list, no other info)")
+	rootCmd.Flags().BoolVar(&showFullLinkedLibs, "linked-libs", false, "Alias for --ll")
 }

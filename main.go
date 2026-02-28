@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/oh-tarnished/fi/cmd"
+	"github.com/oh-tarnished/finfo/cmd"
 )
 
 func main() {
@@ -11,6 +11,9 @@ func main() {
 	}
 	cmd.FormatFileInfoFunc = func(info interface{}) string {
 		return FormatFileInfo(info.(*FileInfo))
+	}
+	cmd.FormatLinkedLibrariesOnlyFunc = func(info interface{}) string {
+		return FormatLinkedLibrariesOnly(info.(*FileInfo))
 	}
 	cmd.SetDisableColorsFunc = func(disable bool) {
 		DisableColors = disable
