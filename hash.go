@@ -49,18 +49,18 @@ func CalculateHashes(path string) (*HashInfo, error) {
 func FormatHashInfo(info *HashInfo, labelFn, treeFn, valueFn func(a ...interface{}) string) string {
 	var sb strings.Builder
 
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeFn("├─"),
 		labelFn("MD5    :"),
-		valueFn(info.MD5)))
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+		valueFn(info.MD5))
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeFn("├─"),
 		labelFn("SHA256 :"),
-		valueFn(info.SHA256)))
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+		valueFn(info.SHA256))
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeFn("╰─"),
 		labelFn("SHA512 :"),
-		valueFn(info.SHA512)))
+		valueFn(info.SHA512))
 
 	return sb.String()
 }
@@ -79,82 +79,82 @@ func CompareFiles(path1, path2 string, labelFn, treeFn, matchFn, diffFn, valueFn
 	}
 
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("\n%s\n", labelFn("diff "+filepath.Base(path1)+" "+filepath.Base(path2))))
-	sb.WriteString(fmt.Sprintf("%s %s\n", diffFn("---"), valueFn(path1)))
-	sb.WriteString(fmt.Sprintf("%s %s\n\n", matchFn("+++"), valueFn(path2)))
+	fmt.Fprintf(&sb, "\n%s\n", labelFn("diff "+filepath.Base(path1)+" "+filepath.Base(path2)))
+	fmt.Fprintf(&sb, "%s %s\n", diffFn("---"), valueFn(path1))
+	fmt.Fprintf(&sb, "%s %s\n\n", matchFn("+++"), valueFn(path2))
 
 	// Compare sizes
 	sb.WriteString(labelFn("Size:\n"))
 	if info1.Size() == info2.Size() {
-		sb.WriteString(fmt.Sprintf("  %s Both files are %s\n",
+		fmt.Fprintf(&sb, "  %s Both files are %s\n",
 			matchFn("✓"),
-			valueFn(fmt.Sprintf("%d bytes", info1.Size()))))
+			valueFn(fmt.Sprintf("%d bytes", info1.Size())))
 	} else {
-		sb.WriteString(fmt.Sprintf("  %s File 1: %s\n", diffFn("✗"), valueFn(fmt.Sprintf("%d bytes", info1.Size()))))
-		sb.WriteString(fmt.Sprintf("  %s File 2: %s\n", diffFn("✗"), valueFn(fmt.Sprintf("%d bytes", info2.Size()))))
+		fmt.Fprintf(&sb, "  %s File 1: %s\n", diffFn("✗"), valueFn(fmt.Sprintf("%d bytes", info1.Size())))
+		fmt.Fprintf(&sb, "  %s File 2: %s\n", diffFn("✗"), valueFn(fmt.Sprintf("%d bytes", info2.Size())))
 		diff := info1.Size() - info2.Size()
 		if diff > 0 {
-			sb.WriteString(fmt.Sprintf("  %s\n", diffFn(fmt.Sprintf("Δ File 1 is %d bytes larger", diff))))
+			fmt.Fprintf(&sb, "  %s\n", diffFn(fmt.Sprintf("Δ File 1 is %d bytes larger", diff)))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s\n", diffFn(fmt.Sprintf("Δ File 2 is %d bytes larger", -diff))))
+			fmt.Fprintf(&sb, "  %s\n", diffFn(fmt.Sprintf("Δ File 2 is %d bytes larger", -diff)))
 		}
 	}
 
 	// Compare permissions
-	sb.WriteString(fmt.Sprintf("\n%s\n", labelFn("Permissions:")))
+	fmt.Fprintf(&sb, "\n%s\n", labelFn("Permissions:"))
 	if info1.Mode() == info2.Mode() {
-		sb.WriteString(fmt.Sprintf("  %s Both files have %s\n", matchFn("✓"), valueFn(info1.Mode().String())))
+		fmt.Fprintf(&sb, "  %s Both files have %s\n", matchFn("✓"), valueFn(info1.Mode().String()))
 	} else {
-		sb.WriteString(fmt.Sprintf("  %s File 1: %s\n", diffFn("✗"), valueFn(info1.Mode().String())))
-		sb.WriteString(fmt.Sprintf("  %s File 2: %s\n", diffFn("✗"), valueFn(info2.Mode().String())))
+		fmt.Fprintf(&sb, "  %s File 1: %s\n", diffFn("✗"), valueFn(info1.Mode().String()))
+		fmt.Fprintf(&sb, "  %s File 2: %s\n", diffFn("✗"), valueFn(info2.Mode().String()))
 	}
 
 	// Compare modification times
-	sb.WriteString(fmt.Sprintf("\n%s\n", labelFn("Modified:")))
+	fmt.Fprintf(&sb, "\n%s\n", labelFn("Modified:"))
 	if info1.ModTime().Equal(info2.ModTime()) {
-		sb.WriteString(fmt.Sprintf("  %s Both at %s\n",
+		fmt.Fprintf(&sb, "  %s Both at %s\n",
 			matchFn("✓"),
-			valueFn(info1.ModTime().Format("2006-01-02 15:04:05"))))
+			valueFn(info1.ModTime().Format("2006-01-02 15:04:05")))
 	} else {
-		sb.WriteString(fmt.Sprintf("  %s File 1: %s\n", diffFn("✗"), valueFn(info1.ModTime().Format("2006-01-02 15:04:05"))))
-		sb.WriteString(fmt.Sprintf("  %s File 2: %s\n", diffFn("✗"), valueFn(info2.ModTime().Format("2006-01-02 15:04:05"))))
+		fmt.Fprintf(&sb, "  %s File 1: %s\n", diffFn("✗"), valueFn(info1.ModTime().Format("2006-01-02 15:04:05")))
+		fmt.Fprintf(&sb, "  %s File 2: %s\n", diffFn("✗"), valueFn(info2.ModTime().Format("2006-01-02 15:04:05")))
 	}
 
 	// Calculate and compare hashes
-	sb.WriteString(fmt.Sprintf("\n%s\n", labelFn("Checksums:")))
+	fmt.Fprintf(&sb, "\n%s\n", labelFn("Checksums:"))
 	hash1, err1 := CalculateHashes(path1)
 	hash2, err2 := CalculateHashes(path2)
 
 	if err1 == nil && err2 == nil {
 		if hash1.MD5 == hash2.MD5 {
-			sb.WriteString(fmt.Sprintf("  %s MD5: %s\n", matchFn("✓"), valueFn(hash1.MD5)))
+			fmt.Fprintf(&sb, "  %s MD5: %s\n", matchFn("✓"), valueFn(hash1.MD5))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s MD5 File 1: %s\n", diffFn("✗"), valueFn(hash1.MD5)))
-			sb.WriteString(fmt.Sprintf("  %s MD5 File 2: %s\n", diffFn("✗"), valueFn(hash2.MD5)))
+			fmt.Fprintf(&sb, "  %s MD5 File 1: %s\n", diffFn("✗"), valueFn(hash1.MD5))
+			fmt.Fprintf(&sb, "  %s MD5 File 2: %s\n", diffFn("✗"), valueFn(hash2.MD5))
 		}
 
 		if hash1.SHA256 == hash2.SHA256 {
-			sb.WriteString(fmt.Sprintf("  %s SHA256: %s\n", matchFn("✓"), valueFn(hash1.SHA256)))
+			fmt.Fprintf(&sb, "  %s SHA256: %s\n", matchFn("✓"), valueFn(hash1.SHA256))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s SHA256 File 1: %s\n", diffFn("✗"), valueFn(hash1.SHA256)))
-			sb.WriteString(fmt.Sprintf("  %s SHA256 File 2: %s\n", diffFn("✗"), valueFn(hash2.SHA256)))
+			fmt.Fprintf(&sb, "  %s SHA256 File 1: %s\n", diffFn("✗"), valueFn(hash1.SHA256))
+			fmt.Fprintf(&sb, "  %s SHA256 File 2: %s\n", diffFn("✗"), valueFn(hash2.SHA256))
 		}
 
 		if hash1.SHA512 == hash2.SHA512 {
-			sb.WriteString(fmt.Sprintf("  %s SHA512: %s\n", matchFn("✓"), valueFn(hash1.SHA512)))
+			fmt.Fprintf(&sb, "  %s SHA512: %s\n", matchFn("✓"), valueFn(hash1.SHA512))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s SHA512 File 1: %s\n", diffFn("✗"), valueFn(hash1.SHA512)))
-			sb.WriteString(fmt.Sprintf("  %s SHA512 File 2: %s\n", diffFn("✗"), valueFn(hash2.SHA512)))
+			fmt.Fprintf(&sb, "  %s SHA512 File 1: %s\n", diffFn("✗"), valueFn(hash1.SHA512))
+			fmt.Fprintf(&sb, "  %s SHA512 File 2: %s\n", diffFn("✗"), valueFn(hash2.SHA512))
 		}
 
 		// Overall verdict
-		sb.WriteString(fmt.Sprintf("\n%s\n", labelFn("Verdict:")))
+		fmt.Fprintf(&sb, "\n%s\n", labelFn("Verdict:"))
 		if hash1.SHA256 == hash2.SHA256 && info1.Size() == info2.Size() {
-			sb.WriteString(fmt.Sprintf("  %s\n", matchFn("✓ Files are IDENTICAL (same content)")))
+			fmt.Fprintf(&sb, "  %s\n", matchFn("✓ Files are IDENTICAL (same content)"))
 		} else if hash1.SHA256 != hash2.SHA256 && info1.Size() == info2.Size() {
-			sb.WriteString(fmt.Sprintf("  %s\n", diffFn("✗ Files are DIFFERENT (same size, different content)")))
+			fmt.Fprintf(&sb, "  %s\n", diffFn("✗ Files are DIFFERENT (same size, different content)"))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s\n", diffFn("✗ Files are DIFFERENT")))
+			fmt.Fprintf(&sb, "  %s\n", diffFn("✗ Files are DIFFERENT"))
 		}
 	}
 

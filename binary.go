@@ -173,19 +173,19 @@ func FormatBinaryInfo(info *BinaryInfo, showFullLinkedLibs bool, labelFn, valueF
 		}
 		for i := 0; i < limit; i++ {
 			if i == limit-1 && len(info.LinkedLibraries) <= limit {
-				sb.WriteString(fmt.Sprintf("  %s %s\n",
+				fmt.Fprintf(&sb, "  %s %s\n",
 					treeFn("╰──"),
-					valueFn(info.LinkedLibraries[i])))
+					valueFn(info.LinkedLibraries[i]))
 			} else {
-				sb.WriteString(fmt.Sprintf("  %s %s\n",
+				fmt.Fprintf(&sb, "  %s %s\n",
 					treeFn("├──"),
-					valueFn(info.LinkedLibraries[i])))
+					valueFn(info.LinkedLibraries[i]))
 			}
 		}
 		if !showFullLinkedLibs && len(info.LinkedLibraries) > limit {
-			sb.WriteString(fmt.Sprintf("  %s %s\n",
+			fmt.Fprintf(&sb, "  %s %s\n",
 				treeFn("╰──"),
-				valueFn(fmt.Sprintf("... and %d more (use --ll for full list)", len(info.LinkedLibraries)-limit))))
+				valueFn(fmt.Sprintf("... and %d more (use --ll for full list)", len(info.LinkedLibraries)-limit)))
 		}
 	}
 
@@ -201,9 +201,9 @@ func FormatLinkedLibrariesOnlySection(info *BinaryInfo, labelFn, valueFn, treeFn
 	sb.WriteString(labelFn("Linked Libraries:\n"))
 	for i, lib := range info.LinkedLibraries {
 		if i == len(info.LinkedLibraries)-1 {
-			sb.WriteString(fmt.Sprintf("  %s %s\n", treeFn("╰──"), valueFn(lib)))
+			fmt.Fprintf(&sb, "  %s %s\n", treeFn("╰──"), valueFn(lib))
 		} else {
-			sb.WriteString(fmt.Sprintf("  %s %s\n", treeFn("├──"), valueFn(lib)))
+			fmt.Fprintf(&sb, "  %s %s\n", treeFn("├──"), valueFn(lib))
 		}
 	}
 	return sb.String()

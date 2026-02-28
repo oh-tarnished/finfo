@@ -78,9 +78,9 @@ func FormatFileInfo(fi *FileInfo) string {
 	// Print remaining lines with tree structure
 	for i := 1; i < len(sizeLines); i++ {
 		if i == len(sizeLines)-1 {
-			sb.WriteString(fmt.Sprintf("              %s ", treeColor.Sprint("╰─")))
+			fmt.Fprintf(&sb, "              %s ", treeColor.Sprint("╰─"))
 		} else {
-			sb.WriteString(fmt.Sprintf("              %s ", treeColor.Sprint("├─")))
+			fmt.Fprintf(&sb, "              %s ", treeColor.Sprint("├─"))
 		}
 		sb.WriteString(sizeLines[i])
 		sb.WriteString("\n")
@@ -98,18 +98,18 @@ func FormatFileInfo(fi *FileInfo) string {
 	sb.WriteString(labelColor.Sprint("Permissions : "))
 	sb.WriteString(permColor.Sprintf("%s\n", fi.Permissions))
 	perms := parsePermissions(fi.Permissions)
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("├─"),
 		treeColor.Sprint("Owner  :"),
-		valueColor.Sprint(perms.Owner)))
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+		valueColor.Sprint(perms.Owner))
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("├─"),
 		treeColor.Sprint("Group  :"),
-		valueColor.Sprint(perms.Group)))
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+		valueColor.Sprint(perms.Group))
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("╰─"),
 		treeColor.Sprint("Others :"),
-		valueColor.Sprint(perms.Others)))
+		valueColor.Sprint(perms.Others))
 
 	// File Type Information
 	if fi.FileType != nil {
@@ -142,10 +142,10 @@ func FormatFileInfo(fi *FileInfo) string {
 
 	// Privileges section - header in blue, labels in blue, values in white, warnings in red
 	sb.WriteString(labelColor.Sprint("Privileges:\n"))
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("├─"),
 		treeColor.Sprint("Owner        :"),
-		valueColor.Sprint(fi.Owner)))
+		valueColor.Sprint(fi.Owner))
 
 	writableBy := fi.Owner + " only"
 	writableColor := valueColor
@@ -153,10 +153,10 @@ func FormatFileInfo(fi *FileInfo) string {
 		writableBy = "all users"
 		writableColor = warnColor
 	}
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("├─"),
 		treeColor.Sprint("Writable by  :"),
-		writableColor.Sprint(writableBy)))
+		writableColor.Sprint(writableBy))
 
 	requiresSudo := "no"
 	sudoColor := valueColor
@@ -164,10 +164,10 @@ func FormatFileInfo(fi *FileInfo) string {
 		requiresSudo = "yes"
 		sudoColor = warnColor
 	}
-	sb.WriteString(fmt.Sprintf("  %s %s %s\n",
+	fmt.Fprintf(&sb, "  %s %s %s\n",
 		treeColor.Sprint("╰─"),
 		treeColor.Sprint("Requires sudo:"),
-		sudoColor.Sprint(requiresSudo)))
+		sudoColor.Sprint(requiresSudo))
 
 	// Hash Information
 	if fi.HashInfo != nil {
@@ -183,12 +183,12 @@ func FormatFileInfo(fi *FileInfo) string {
 			parts := strings.Split(link, " → ")
 			if len(parts) == 2 {
 				if i == len(fi.SymlinkChain)-1 {
-					sb.WriteString(fmt.Sprintf("  %s ", treeColor.Sprint("╰──")))
+					fmt.Fprintf(&sb, "  %s ", treeColor.Sprint("╰──"))
 					sb.WriteString(pathColor.Sprint(parts[0]))
 					sb.WriteString(sizeColor.Sprint(" → "))
 					sb.WriteString(sizeColor.Sprint(parts[1]))
 				} else {
-					sb.WriteString(fmt.Sprintf("  %s ", treeColor.Sprint("├──")))
+					fmt.Fprintf(&sb, "  %s ", treeColor.Sprint("├──"))
 					sb.WriteString(pathColor.Sprint(parts[0]))
 					sb.WriteString(sizeColor.Sprint(" → "))
 					sb.WriteString(sizeColor.Sprintln(parts[1]))
@@ -196,9 +196,9 @@ func FormatFileInfo(fi *FileInfo) string {
 			} else {
 				// Fallback if format is unexpected
 				if i == len(fi.SymlinkChain)-1 {
-					sb.WriteString(fmt.Sprintf("  %s %s", treeColor.Sprint("╰──"), symlinkColor.Sprint(link)))
+					fmt.Fprintf(&sb, "  %s %s", treeColor.Sprint("╰──"), symlinkColor.Sprint(link))
 				} else {
-					sb.WriteString(fmt.Sprintf("  %s %s\n", treeColor.Sprint("├──"), symlinkColor.Sprint(link)))
+					fmt.Fprintf(&sb, "  %s %s\n", treeColor.Sprint("├──"), symlinkColor.Sprint(link))
 				}
 			}
 		}
