@@ -1,6 +1,6 @@
-# finfo - File Information CLI Tool
+# finfo
 
-A powerful, colorful CLI tool for displaying comprehensive file information with advanced analysis capabilities.
+File info at a glance — metadata, checksums, binary analysis & linked libraries.
 
 ## Features
 
@@ -31,6 +31,11 @@ Ensure `$HOME/go/bin` is in your PATH.
 
 #### Homebrew
 ```bash
+# Pre-built binary (recommended)
+brew tap oh-tarnished/tap
+brew install finfo
+
+# Or from source
 brew tap oh-tarnished/finfo
 brew install finfo
 ```

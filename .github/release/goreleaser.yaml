@@ -65,8 +65,6 @@ changelog:
       - "^chore:"
       - typo
 
-# Homebrew tap - publishes pre-built binary to oh-tarnished/homebrew-tap
-# Requires HOMEBREW_TAP_GITHUB_TOKEN with write access to the tap repo
 homebrew_casks:
   - name: finfo
     repository:
@@ -74,14 +72,13 @@ homebrew_casks:
       name: homebrew-tap
     directory: Casks
     homepage: "https://github.com/oh-tarnished/finfo"
-    description: "Display detailed file information with tree-like formatting"
+    description: "File info at a glance — metadata, checksums, binary analysis"
     ids:
       - finfo-archive
     binaries:
       - finfo
     url:
       verified: "github.com/oh-tarnished/finfo/"
-    # Remove quarantine for unsigned binary (Gatekeeper)
     hooks:
       post:
         install: |

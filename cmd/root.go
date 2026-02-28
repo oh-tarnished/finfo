@@ -44,7 +44,7 @@ var showFullLinkedLibs bool
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "finfo [file path or command...]",
-	Short: "Display detailed file information",
+	Short: "File info at a glance — metadata, checksums, binary analysis",
 	Long: `finfo is a CLI tool that displays comprehensive information about files including:
 - File size in multiple units (GB, MB, KB, bytes)
 - Architecture and OS
