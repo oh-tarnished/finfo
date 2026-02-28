@@ -4,7 +4,14 @@ import (
 	"github.com/oh-tarnished/finfo/cmd"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
+	cmd.SetVersion(version)
 	// Set the function pointers for cmd package to use
 	cmd.GetFileInfoFunc = func(path string) (interface{}, error) {
 		return GetFileInfo(path)

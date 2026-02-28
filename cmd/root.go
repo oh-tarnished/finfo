@@ -207,6 +207,11 @@ func Execute() {
 	}
 }
 
+// SetVersion sets the version string for --version flag
+func SetVersion(v string) {
+	rootCmd.Version = v
+}
+
 func init() {
 	rootCmd.Flags().BoolVar(&noColor, "no-color", false, "Disable colored output")
 	rootCmd.Flags().BoolVar(&searchLib, "lib", false, "Search for library files (.so, .a, .dylib)")
