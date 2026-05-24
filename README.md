@@ -19,7 +19,7 @@ File info at a glance — metadata, checksums, binary analysis & linked librarie
 
 ### Go install (all platforms)
 
-Requires Go 1.21 or later:
+Requires Go 1.25 or later:
 
 ```bash
 go install github.com/oh-tarnished/finfo@latest
