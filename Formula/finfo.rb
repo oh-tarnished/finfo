@@ -18,6 +18,7 @@ class Finfo < Formula
 
   def install
     system "go", "build", *std_go_args(ldflags: "-s -w")
+    man1.install "man/finfo.1"
   end
 
   test do

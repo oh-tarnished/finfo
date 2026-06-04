@@ -12,9 +12,20 @@ build:
 build-release:
     go build -ldflags="-s -w" -o finfo
 
-# Install locally to /usr/local/bin
+# Install locally to /usr/local/bin (and man page to /usr/local/share/man)
 install: build
-    cp finfo /usr/local/bin/finfo
+    sudo install -m 0755 finfo /usr/local/bin/finfo
+    sudo install -d -m 0755 /usr/local/share/man/man1
+    sudo install -m 0644 man/finfo.1 /usr/local/share/man/man1/finfo.1
+
+# Uninstall locally
+uninstall:
+    sudo rm -f /usr/local/bin/finfo
+    sudo rm -f /usr/local/share/man/man1/finfo.1
+
+# Preview the man page
+man:
+    man ./man/finfo.1
 
 # Clean build artifacts
 clean:

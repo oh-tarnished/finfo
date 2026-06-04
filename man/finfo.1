@@ -1,0 +1,88 @@
+.TH FINFO 1 "2026-06-04" "finfo" "User Commands"
+.SH NAME
+finfo \- file info at a glance: metadata, checksums, binary analysis & linked libraries
+.SH SYNOPSIS
+.B finfo
+[\fIOPTIONS\fR] \fIFILE\fR...
+.br
+.B finfo
+\fB\-\-diff\fR \fIFILE1\fR \fIFILE2\fR
+.br
+.B finfo
+\fB\-\-lib\fR \fINAME\fR
+.SH DESCRIPTION
+.B finfo
+displays comprehensive information about one or more files, including size,
+architecture, permissions, file type, MIME type, symlink chain, linked
+libraries, and (on macOS) code signatures.
+.PP
+If an argument is not a valid path,
+.B finfo
+searches for it in
+.BR PATH .
+Glob patterns are expanded by the shell.
+.SH OPTIONS
+.TP
+.B \-\-no\-color
+Disable colored output.
+.TP
+.B \-\-hash
+Calculate and show file checksums (MD5, SHA256, SHA512).
+.TP
+.B \-\-lib
+Search for library files (\fI.so\fR, \fI.a\fR, \fI.dylib\fR) matching the argument.
+.TP
+.B \-\-diff
+Compare two files and show a git-like diff of size, permissions,
+modification time, and checksums. Requires exactly two file arguments.
+.TP
+.BR \-\-ll ", " \-\-linked\-libs
+Show only the full list of linked libraries, with no other info.
+.TP
+.B \-\-version
+Print version information and exit.
+.TP
+.BR \-h ", " \-\-help
+Print usage information and exit.
+.SH EXAMPLES
+.TP
+Show info for a specific file:
+.B finfo /usr/bin/python3
+.TP
+Resolve a command name through
+.BR PATH :
+.B finfo python3
+.TP
+Show multiple files:
+.B finfo file1 file2 file3
+.TP
+Show checksums:
+.B finfo \-\-hash file.zip
+.TP
+Compare two files:
+.B finfo \-\-diff file1.txt file2.txt
+.TP
+Search for a library:
+.B finfo \-\-lib ssl
+.TP
+List linked libraries only:
+.B finfo \-\-ll cmake
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+An error occurred (invalid arguments, unreadable file, command not found in PATH, etc.).
+.SH SEE ALSO
+.BR file (1),
+.BR stat (1),
+.BR otool (1),
+.BR ldd (1),
+.BR shasum (1)
+.SH AUTHOR
+Written by Srikanth Kandarp (@oh\-tarnished).
+.SH REPORTING BUGS
+Report issues at <https://github.com/oh-tarnished/finfo/issues>.
+.SH COPYRIGHT
+MIT License. See the LICENSE file in the source distribution for details.
